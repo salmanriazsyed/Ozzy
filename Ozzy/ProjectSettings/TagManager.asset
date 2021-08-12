@@ -22,6 +22,9 @@ TagManager:
   - missingDoorKnob
   - corrWayBack
   - getAxe
+  - houseEntry
+  - islandFound
+  - underground
   layers:
   - Default
   - TransparentFX
