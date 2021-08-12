@@ -23,12 +23,6 @@ public class Triggers : MonoBehaviour
     public GameObject Note6;
     public GameObject Note7;
 
-    //##### First Note Trigger #####
-    public AudioSource heavyKnock;
-    public GameObject room1Corridor;
-    private bool flagFirstNote;
-    //##### First Note Trigger #####
-
 
     //get flashlight trigger:
     private bool isFlashCollected;
@@ -62,15 +56,13 @@ public class Triggers : MonoBehaviour
     private bool lookBehind;
     private bool room4Entry;
     private Light noteLightComp;
-    private bool isPaused;
+    public static bool isPaused = false;
     public GameObject pauseMenu;
     public GameObject areYouSure;
 
     // Start is called before the first frame update
     void Start()
     {
-        pauseMenu.SetActive(false);
-        areYouSure.SetActive(false);
         playerWithAxe.SetActive(false);
         ghostWoman.SetActive(false);
         noteLight.SetActive(false);
@@ -83,34 +75,26 @@ public class Triggers : MonoBehaviour
         mainSong.Play();
         stress.Stop();
 
-        // First Note 
-        flagFirstNote = false;
-        room1Corridor.SetActive(true);
-
         doorAnimator = animatedDoor.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            pauseGame();
-        }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
             if (isFlashCollected)
             {
                 switchSound.Play();
-            }
-            if (!isBatteryCollected)
-            {
-                Debug.Log("No batteries in flashlight. Find batteries");
-            }
-            else
-            {
-                Debug.Log("Flash turned on. Find something to break the lock");
+                if (!isBatteryCollected)
+                {
+                    Debug.Log("No batteries in flashlight. Find batteries");
+                }
+                else
+                {
+                    Debug.Log("Flash turned on. Find something to break the lock");
+                }
             }
         }
     }
@@ -120,12 +104,6 @@ public class Triggers : MonoBehaviour
         // First Note
         if (other.CompareTag("Note1Trigger"))
         {
-            if (!flagFirstNote)
-            {
-                flagFirstNote = true;
-                room1Corridor.SetActive(false);
-                heavyKnock.Play();
-            }
         }
 
         if (other.CompareTag("Note4Trigger"))
@@ -141,13 +119,13 @@ public class Triggers : MonoBehaviour
 
         if (other.CompareTag("Room4EntryTrigger"))
         {
+            ghostWoman.SetActive(false);
             if (!room4Entry)
             {
                 room4Entry = true;
                 stress.Stop();
                 relief.Play();
                 //mainSong.Play();
-                ghostWoman.SetActive(false);
             }
         }
 
@@ -391,25 +369,5 @@ public class Triggers : MonoBehaviour
     IEnumerator waitForSecs(int waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-    }
-
-    void pauseGame()
-    {
-        if (isPaused)
-        {
-            Time.timeScale = 1;
-            isPaused = false;
-            pauseMenu.SetActive(false);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = false;
-            Time.timeScale = 0;
-            isPaused = true;
-            pauseMenu.SetActive(true);
-        }
     }
 }

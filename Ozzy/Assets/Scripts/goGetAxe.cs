@@ -4,27 +4,36 @@ using UnityEngine;
 
 public class goGetAxe : MonoBehaviour
 {
-    public bool checkPoint;
-    public GameObject axeLight;
-    public GameObject axeTriggerCube;
-
-    private void Start()
-    {
-        checkPoint = false;
-        axeLight.SetActive(false);
-    }
+    public AudioSource heavyKnock;
+    private bool hasKnocked = false;
+    public GameObject room1Corridor;
+    public GameObject playerWithAxe;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (checkPoint == false)
+        if (other.CompareTag("Player"))
         {
-            if (other.CompareTag("Player"))
+            if (!playerWithAxe.activeSelf)
             {
-                checkPoint = true;
-                axeTriggerCube.SetActive(true);
-                axeLight.SetActive(true);
-                Debug.Log("Need something to break the lock!");
+                Debug.Log("Need to find the lock's key or something to break it with");
+            }
+            else
+            {
+                Debug.Log("Break the lock!");
+            }
+        
+            if (!hasKnocked)
+            {
+                hasKnocked = true;
+                room1Corridor.SetActive(false);
+                heavyKnock.Play();
             }
         }
+    }
+
+    private void Start()
+    {
+        hasKnocked = false;
+        room1Corridor.SetActive(true);
     }
 }
