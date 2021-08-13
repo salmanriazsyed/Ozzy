@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Triggers : MonoBehaviour
 {
@@ -40,6 +41,7 @@ public class Triggers : MonoBehaviour
 
     //get doorKnob puzzle:
     private bool isDoorKnobCollected;
+    private bool isDoorKnobPlaced;
     public GameObject doorKnobToPick;
     public GameObject doorKnobToActivate;
     public GameObject animatedDoor;
@@ -60,12 +62,21 @@ public class Triggers : MonoBehaviour
     public GameObject pauseMenu;
     public GameObject areYouSure;
 
+    //captions:
+    public GameObject textBox;
+    private Text txt;
+
     // Start is called before the first frame update
     void Start()
     {
         playerWithAxe.SetActive(false);
         ghostWoman.SetActive(false);
         noteLight.SetActive(false);
+
+        txt = textBox.GetComponent<Text>();
+
+        setSubtitle("What the hell happened here.. \nMOM DAD WHERE ARE YOU?", 6.0f);
+
         ghostNMAgent = ghostWoman.GetComponent<NavMeshAgent>();
         noteLightComp = noteLight.GetComponent<Light>();
         noteLightComp.intensity = 2.0f;
@@ -104,6 +115,7 @@ public class Triggers : MonoBehaviour
         // First Note
         if (other.CompareTag("Note1Trigger"))
         {
+            setSubtitle("Huh..", 2.0f);
         }
 
         if (other.CompareTag("Note4Trigger"))
@@ -133,11 +145,11 @@ public class Triggers : MonoBehaviour
         {
             if (isDoorKnobCollected)
             {
-                Debug.Log("Press E to place the missing piece");
+                //Debug.Log("Press E to place the missing piece");
             }
             else
             {
-                Debug.Log("Find the missing piece to open the door");
+                //Debug.Log("Find the missing piece to open the door");
             }
         }
 
@@ -145,11 +157,11 @@ public class Triggers : MonoBehaviour
         {
             if (isDoorKnobCollected)
             {
-                Debug.Log("Place the missing piece on the cylindrical structure to open the door");
+                //Debug.Log("Place the missing piece on the cylindrical structure to open the door");
             }
             else
             {
-                Debug.Log("Press E to pick the missing piece");
+                //Debug.Log("Press E to pick the missing piece");
             }
         }
 
@@ -157,7 +169,7 @@ public class Triggers : MonoBehaviour
         {
             if (!isFlashCollected)
             {
-                Debug.Log("Press E to pick Flashlight");
+                //Debug.Log("Press E to pick Flashlight");
             }
         }
 
@@ -165,7 +177,7 @@ public class Triggers : MonoBehaviour
         {
             if (!isBatteryCollected)
             {
-                Debug.Log("Press E to pick batteries and put in flashlight");
+                //Debug.Log("Press E to pick batteries and put in flashlight");
             }
         }
 
@@ -189,7 +201,7 @@ public class Triggers : MonoBehaviour
         {
             if (!isAxeCollected)
             {
-                Debug.Log("Press E to pick the Axe");
+                //Debug.Log("Press E to pick the Axe");
             }
         }
     }
@@ -208,7 +220,7 @@ public class Triggers : MonoBehaviour
 
         if (other.CompareTag("Note2Trigger"))
         {
-            if (!isAxeCollected)
+            if (!ghostWoman.activeSelf)
             {
             Note2.SetActive(true);
             noteLight.SetActive(true);
@@ -217,7 +229,7 @@ public class Triggers : MonoBehaviour
 
         if (other.CompareTag("Note3Trigger"))
         {
-            if (!isAxeCollected)
+            if (!ghostWoman.activeSelf)
             {
             Note3.SetActive(true);
             noteLight.SetActive(true);
@@ -233,6 +245,7 @@ public class Triggers : MonoBehaviour
             Note5.SetActive(true);
             noteLightComp.intensity = 1.0f;
             noteLight.SetActive(true);
+            setSubtitle("Wait what? Who wrote these...", 3.0f);
             }
         }
 
@@ -253,12 +266,13 @@ public class Triggers : MonoBehaviour
         {
             if (!isFlashCollected)
             {
+                txt.text = "Press E to pick Flashlight";
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     meshLight.SetActive(false);
                     stairDownOpen.SetActive(false);
                     isFlashCollected = true;
-                    Debug.Log("No batteries in the flashlight. Find batteries");
+                    setSubtitle("No batteries in the flashlight. Find batteries",4.0f);
                 }
             }
         }
@@ -267,6 +281,7 @@ public class Triggers : MonoBehaviour
         {
             if (!isBatteryCollected)
             {
+                txt.text = "Press E to pick batteries";
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     room2StairsUp.SetActive(false);
@@ -275,20 +290,37 @@ public class Triggers : MonoBehaviour
                     batteries.SetActive(false);
                     zombieToHide.SetActive(false);
                     isBatteryCollected = true;
-                    Debug.Log("Press F to toggle Flashlight");
                 }
+            }
+            else
+            {
+                txt.text = "";
             }
         }
 
         if (other.CompareTag("missingDoorKnob"))
-        { 
+        {
             if (isDoorKnobCollected)
             {
-                if (Input.GetKeyDown(KeyCode.E))
+                if (isDoorKnobPlaced)
                 {
-                    doorKnobToActivate.SetActive(true);
-                    doorAnimator.SetTrigger("OpenDoor");
+                    txt.text = "";
                 }
+                else
+                {
+                    txt.text = "Press E to place missing piece";
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        txt.text = "";
+                        doorKnobToActivate.SetActive(true);
+                        doorAnimator.SetTrigger("OpenDoor");
+                        isDoorKnobPlaced = true;
+                    }
+                }
+            }
+            else
+            {
+                setSubtitle("Find the missing piece", 4.0f);
             }
         }
 
@@ -296,24 +328,33 @@ public class Triggers : MonoBehaviour
         {
             if (!isDoorKnobCollected)
             {
+                txt.text = "Press E to pick the missing piece";
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     doorKnobToPick.SetActive(false);
                     isDoorKnobCollected = true;
                 }
             }
-        }
-
-        if (!isAxeCollected)
-        {
-            if (other.CompareTag("getAxe"))
+            else
             {
+                if (!isDoorKnobPlaced)
+                {
+                    txt.text = "";
+                }
+            }
+        }
+        
+        if (other.CompareTag("getAxe"))
+        {
+            if (!isAxeCollected)
+            {
+                txt.text = "Press E to pick the axe";
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     axeMesh.SetActive(false);
                     playerWithAxe.SetActive(true);
                     isAxeCollected = true;
-                    Debug.Log("This will help break the lock in the main room!");
+                    setSubtitle("This should help in breaking the lock!",3.0f);
                 }
             }
         }
@@ -354,6 +395,7 @@ public class Triggers : MonoBehaviour
 
         if (other.CompareTag("Note6Trigger"))
         {
+            setSubtitle("it can't be! I must be dreaming all this..", 5.0f);
             Note6.SetActive(false);
             noteLightComp.intensity = 2.0f;
             noteLight.SetActive(false);
@@ -364,10 +406,25 @@ public class Triggers : MonoBehaviour
             Note7.SetActive(false);
             noteLight.SetActive(false);
         }
+
+        if (other.CompareTag("getBatteries"))
+        {
+            if (isBatteryCollected)
+            {
+                setSubtitle("Press F to toggle Flashlight", 4.0f);
+            }
+        }
     }
 
-    IEnumerator waitForSecs(int waitTime)
+    IEnumerator waitForSecs(string textToShow, float waitTime)
     {
+        txt.text = textToShow;
         yield return new WaitForSeconds(waitTime);
+        txt.text = "";
+    }
+
+    void setSubtitle(string textToShow, float numSecs)
+    {
+        StartCoroutine(waitForSecs(textToShow, numSecs));
     }
 }

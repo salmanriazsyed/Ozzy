@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class Doors : MonoBehaviour 
 {
-	public GameObject axeDragger;
-	public GameObject crawlingWoman;
+	//public GameObject axeDragger;
+	//public GameObject crawlingWoman;
+	public GameObject typingWoman;
 
     private void Start()
     {
-		axeDragger.SetActive(false);
-		crawlingWoman.SetActive(false);
+		typingWoman.SetActive(false);
+		//axeDragger.SetActive(false);
+		//crawlingWoman.SetActive(false);
     }
 
     void OnTriggerEnter(Collider coll)
@@ -19,8 +21,9 @@ public class Doors : MonoBehaviour
 		{
 			GetComponent<Animator>().Play("Door_open");
 			this.enabled=false;
-			axeDragger.SetActive(true);
-			crawlingWoman.SetActive(true);
+			typingWoman.SetActive(true);
+			//axeDragger.SetActive(true);
+			//crawlingWoman.SetActive(true);
 		}
 	}
 }
