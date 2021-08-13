@@ -25,6 +25,7 @@ TagManager:
   - houseEntry
   - islandFound
   - underground
+  - finalEnemy
   layers:
   - Default
   - TransparentFX
